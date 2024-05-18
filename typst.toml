@@ -1,0 +1,16 @@
+[package]
+name = "tongji-slides-typst"
+version = "0.1.0"
+entrypoint = "main.typ"
+authors = ["TJ-CSCCG <https://github.com/TJ-CSCCG>"]
+license = "MIT"
+description = "同济slide模板。Tongji slides typst template."
+repository = "https://github.com/TJ-CSCCG/tongji-slides-typst.git"
+keywords = ["Tongji University", "slides"]
+categories = ["template", "slide"]
+exclude = [""]
+
+[template]
+path = "./"
+entrypoint = "main.typ"
+thumbnail = "./thumbnail.png"

@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+mkdir ./pngpdf
+typst compile $1 ./pngpdf/slides-{n}.png
+convert ./pngpdf/slides-*.png output.pdf
