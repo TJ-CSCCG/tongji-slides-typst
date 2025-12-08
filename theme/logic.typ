@@ -98,19 +98,19 @@
 }
 
 #let _conditional-display(visible-subslides, reserve-space, mode, body) = {
-  locate( loc => {
-    let vs = if reserve-space and handout-mode.at(loc) {
+  context {
+    let vs = if reserve-space and handout-mode.get() {
       (:)
     } else {
       visible-subslides
     }
     repetitions.update(rep => calc.max(rep, _last-required-subslide(vs)))
-    if _check-visible(subslide.at(loc).first(), vs) {
+    if _check-visible(subslide.get().first(), vs) {
       body
     } else if reserve-space {
       _slides-cover(mode, body)
     }
-  })
+  }
 }
 
 #let uncover(visible-subslides, mode: "invisible", body) = {
@@ -247,35 +247,35 @@
 }
 
 #let pause = {
-  // We need two separate `locate`s because `repetitions` needs to be updated
+  // We need two separate `context`s because `repetitions` needs to be updated
   // using the new value of `pause-counter`.
-  locate( loc => {
-    if not handout-mode.at(loc) {
+  context {
+    if not handout-mode.get() {
       pause-counter.step()
     }
-  })
-  locate( loc => {
-    repetitions.update(rep => calc.max(rep, pause-counter.at(loc).first() + 1))
-  })
+  }
+  context {
+    repetitions.update(rep => calc.max(rep, pause-counter.get().first() + 1))
+  }
 }
 
-#let paused-content(body) = locate( loc => {
-  let current-subslide = subslide.at(loc).first()
-  let current-pause-counter = pause-counter.at(loc).first()
+#let paused-content(body) = context {
+  let current-subslide = subslide.get().first()
+  let current-pause-counter = pause-counter.get().first()
 
   if current-subslide > current-pause-counter {
     body
   } else {
     hide(body)
   }
-})
+}
 
 #let polylux-slide(body) = {
-  locate( loc => {
-    if logical-slide.at(loc).first() > 0 {
+  context {
+    if logical-slide.get().first() > 0 {
       pagebreak(weak: true)
     }
-  })
+  }
   logical-slide.step()
   subslide.update(1)
   repetitions.update(1)
@@ -285,7 +285,6 @@
   show math.equation: paused-content
   show box: paused-content
   show block: paused-content
-  show path: paused-content
   show rect: paused-content
   show square: paused-content
   show circle: paused-content
@@ -296,12 +295,12 @@
 
   // Having this here is a bit unfortunate concerning separation of concerns
   // but I'm not comfortable with logic depending on pdfpc...
-  let pdfpc-slide-markers(curr-subslide) = locate( loc => [
+  let pdfpc-slide-markers(curr-subslide) = context [
     #metadata((t: "NewSlide")) <pdfpc>
-    #metadata((t: "Idx", v: counter(page).at(loc).first() - 1)) <pdfpc>
+    #metadata((t: "Idx", v: counter(page).get().first() - 1)) <pdfpc>
     #metadata((t: "Overlay", v: curr-subslide - 1)) <pdfpc>
-    #metadata((t: "LogicalSlide", v: logical-slide.at(loc).first())) <pdfpc>
-  ])
+    #metadata((t: "LogicalSlide", v: logical-slide.get().first())) <pdfpc>
+  ]
 
   pdfpc-slide-markers(1)
 
@@ -310,8 +309,8 @@
   subslide.step()
   set heading(outlined: false)
 
-  locate( loc => {
-    let reps = repetitions.at(loc).first()
+  context {
+    let reps = repetitions.get().first()
     for curr-subslide in range(2, reps + 1) {
       pause-counter.update(0)
       pagebreak(weak: true)
@@ -321,5 +320,5 @@
       body
       subslide.step()
     }
-  })
+  }
 }
