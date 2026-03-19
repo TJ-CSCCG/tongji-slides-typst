@@ -45,32 +45,39 @@
     if footer != none {
       footer
     } else {
-      locate(
-        loc => {
-          let colors = uni-colors.at(loc)
+      context {
+        let colors = uni-colors.get()
 
-          show: block.with(width: 100%, height: auto, fill: colors.a)
-          grid(
-            columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
-            // cell(fill: colors.b,),
-            // cell(fill: colors.b),
-            // // cell(uni-short-title.display()),
-            // // cell(uni-short-date.display()),
-            cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
-          )
-        },
-      )
+        show: block.with(width: 100%, height: auto, fill: colors.a)
+        grid(
+          columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
+          // cell(fill: colors.b,),
+          // cell(fill: colors.b),
+          // // cell(uni-short-title.display()),
+          // // cell(uni-short-date.display()),
+          cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
+        )
+      }
     }
   }
 
-  let content = locate(
-    loc => {
-      let colors = uni-colors.at(loc)
+  let author-grid = [
+    #set text(size: .8em)
+    #grid(
+      columns: (1fr,) * calc.min(authors.len(), 3), 
+      column-gutter: 1em, 
+      row-gutter: 1em, 
+      ..authors.map(author => [#text(fill: black)[#author]]),
+    )
+  ]
 
-      if logo != none {
-        align(right, logo)
-      }
+  let content = {
+    if logo != none {
+      align(right, logo)
+    }
 
+    context {
+      let colors = uni-colors.get()
       align(
         center + horizon, {
           block(inset: 0em, breakable: false, {
@@ -80,10 +87,7 @@
               text(size: 1.2em, fill: colors.a, subtitle)
             }
           })
-          set text(size: .8em)
-          grid(
-            columns: (1fr,) * calc.min(authors.len(), 3), column-gutter: 1em, row-gutter: 1em, ..authors.map(author => text(fill: black, author)),
-          )
+          author-grid
           v(1em)
           if institution-name != none {
             parbreak()
@@ -99,8 +103,8 @@
           }
         },
       )
-    },
-  )
+    }
+  }
 
   set page(
     // margin: ( top: 2em, bottom: 1em, x: 0em ),
@@ -117,22 +121,20 @@
 ) = {
   let body = pad(x: 2em, y: .5em, body)
 
-  let progress-barline = locate(
-    loc => {
-      if uni-progress-bar.at(loc) {
-        let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
-        let colors = uni-colors.at(loc)
+  let progress-barline = context {
+    if uni-progress-bar.get() {
+      let cell = block.with(width: 100%, height: 100%, above: 0pt, below: 0pt, breakable: false)
+      let colors = uni-colors.get()
 
-        utils.polylux-progress(
-          ratio => {
-            grid(
-              rows: 2pt, columns: (ratio * 100%, 1fr), cell(fill: colors.a), cell(fill: colors.b),
-            )
-          },
-        )
-      } else { [] }
-    },
-  )
+      utils.polylux-progress(
+        ratio => {
+          grid(
+            rows: 2pt, columns: (ratio * 100%, 1fr), cell(fill: colors.a), cell(fill: colors.b),
+          )
+        },
+      )
+    } else { [] }
+  }
 
   let header-text = {
     if header != none {
@@ -141,16 +143,14 @@
       if new-section != none {
         utils.register-section(new-section)
       }
-      locate(
-        loc => {
-          let colors = uni-colors.at(loc)
-          block(
-            fill: colors.c, inset: (x: .5em), grid(
-              columns: (60%, 40%), align(top + left, heading(level: 2, text(fill: colors.a, title))), align(top + right, text(fill: colors.a.lighten(65%), utils.current-section)),
-            ),
-          )
-        },
-      )
+      context {
+        let colors = uni-colors.get()
+        block(
+          fill: colors.c, inset: (x: .5em), grid(
+            columns: (60%, 40%), align(top + left, heading(level: 2, text(fill: colors.a, title))), align(top + right, text(fill: colors.a.lighten(65%), utils.current-section)),
+          ),
+        )
+      }
     } else { [] }
   }
 
@@ -181,7 +181,7 @@
           specify_cell(
             align(
               left + horizon, text(
-                font: "Zapfino", fill: rgb(21, 94, 169), size: 13pt, "Tongji University",
+                fill: rgb(21, 94, 169), size: 13pt, weight: "bold", "Tongji University",
               ),
             ),
           ), specify_cell(header-pic), cell[],
@@ -232,21 +232,19 @@
     if footer != none {
       footer
     } else {
-      locate(
-        loc => {
-          let colors = uni-colors.at(loc)
+      context {
+        let colors = uni-colors.get()
 
-          show: block.with(width: 100%, height: auto, fill: colors.a)
-          grid(
-            columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
-            // cell(fill: colors.b,),
-            // cell(fill: colors.b),
-            // // cell(uni-short-title.display()),
-            // // cell(uni-short-date.display()),
-            cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
-          )
-        },
-      )
+        show: block.with(width: 100%, height: auto, fill: colors.a)
+        grid(
+          columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
+          // cell(fill: colors.b,),
+          // cell(fill: colors.b),
+          // // cell(uni-short-title.display()),
+          // // cell(uni-short-date.display()),
+          cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
+        )
+      }
     }
   }
 
@@ -306,25 +304,25 @@
 #let matrix-slide(columns: none, rows: none, footer: none, ..bodies) = {
   let bodies = bodies.pos()
 
-  let columns = if type(columns) == "integer" {
+  let columns-array = if type(columns) == "integer" {
     (1fr,) * columns
-  } else if columns == none {
-    (1fr,) * bodies.len()
-  } else {
+  } else if type(columns) == "array" {
     columns
+  } else {
+    (1fr,) * bodies.len()
   }
-  let num-cols = columns.len()
+  let num-cols = columns-array.len()
 
-  let rows = if type(rows) == "integer" {
+  let rows-array = if type(rows) == "integer" {
     (1fr,) * rows
-  } else if rows == none {
+  } else if type(rows) == "array" {
+    rows
+  } else {
     let quotient = calc.quo(bodies.len(), num-cols)
     let correction = if calc.rem(bodies.len(), num-cols) == 0 { 0 } else { 1 }
     (1fr,) * (quotient + correction)
-  } else {
-    rows
   }
-  let num-rows = rows.len()
+  let num-rows = rows-array.len()
 
   if num-rows * num-cols < bodies.len() {
     panic(
@@ -350,21 +348,19 @@
     if footer != none {
       footer
     } else {
-      locate(
-        loc => {
-          let colors = uni-colors.at(loc)
+      context {
+        let colors = uni-colors.get()
 
-          show: block.with(width: 105%, height: auto, fill: colors.a)
-          grid(
-            columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
-            // cell(fill: colors.b,),
-            // cell(fill: colors.b),
-            // // cell(uni-short-title.display()),
-            // // cell(uni-short-date.display()),
-            cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
-          )
-        },
-      )
+        show: block.with(width: 105%, height: auto, fill: colors.a)
+        grid(
+          columns: (90%, 10%), rows: (1.5em, auto), cell(fill: colors.b, none),
+          // cell(fill: colors.b,),
+          // cell(fill: colors.b),
+          // // cell(uni-short-title.display()),
+          // // cell(uni-short-date.display()),
+          cell(logic.logical-slide.display() + [~/~] + utils.last-slide-number),
+        )
+      }
     }
   }
 
@@ -375,7 +371,7 @@
   }
 
   let content = grid(
-    columns: columns, rows: rows, gutter: 0pt, ..bodies.enumerate().map(color-body),
+    columns: columns-array, rows: rows-array, gutter: 0pt, ..bodies.enumerate().map(color-body),
   )
   let cell = rect.with(width: 100%, height: 100%, stroke: none)
   let specify_cell = rect.with(width: 100%, height: 111%, stroke: none)
@@ -386,7 +382,7 @@
         columns: (90%, 10%), cell(
           align(
             left + horizon, text(
-              font: "Zapfino", fill: rgb(21, 94, 169), size: 13pt, "Tongji University",
+              fill: rgb(21, 94, 169), size: 13pt, weight: "bold", "Tongji University",
             ),
           ),
         ), cell(header-pic),

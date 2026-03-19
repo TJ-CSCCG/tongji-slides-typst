@@ -5,43 +5,39 @@
 // SECTIONS
 
 #let sections-state = state("polylux-sections", ())
-#let register-section(name) = locate(loc => {
+#let register-section(name) = context {
   sections-state.update(sections => {
-    sections.push((body: name, loc: loc))
+    sections.push((body: name, loc: here()))
     sections
   })
-})
+}
 
-#let current-section = locate(loc => {
-  let sections = sections-state.at(loc)
+#let current-section = context {
+  let sections = sections-state.get()
   if sections.len() > 0 {
     sections.last().body
   } else {
     []
   }
-})
+}
 
-#let polylux-outline(enum-args: (:), padding: 0pt) = locate(
-  loc => {
-    let sections = sections-state.final(loc)
-    pad(
-      padding, enum(
-        ..enum-args, ..sections.map(section => link(section.loc, section.body)),
-      ),
-    )
-  },
-)
+#let polylux-outline(enum-args: (:), padding: 0pt) = context {
+  let sections = sections-state.final()
+  pad(
+    padding, enum(
+      ..enum-args, ..sections.map(section => link(section.loc, section.body)),
+    ),
+  )
+}
 
 // PROGRESS
 
-#let polylux-progress(ratio-to-content) = locate(
-  loc => {
-    let ratio = logic.logical-slide.at(loc).first() / logic.logical-slide.final(loc).first()
-    ratio-to-content(ratio)
-  },
-)
+#let polylux-progress(ratio-to-content) = context {
+  let ratio = logic.logical-slide.get().first() / logic.logical-slide.final().first()
+  ratio-to-content(ratio)
+}
 
-#let last-slide-number = locate(loc => logic.logical-slide.final(loc).first())
+#let last-slide-number = context logic.logical-slide.final().first()
 
 // HEIGHT FITTING
 
@@ -81,12 +77,12 @@
     hidden#after-label
   ]
 
-  locate(
-    loc => {
-      let before = query(selector(before-label).before(loc), loc)
-      let before-pos = before.last().location().position()
-      let after = query(selector(after-label).before(loc), loc)
-      let after-pos = after.last().location().position()
+  context {
+    let loc = here()
+    let before = query(selector(before-label).before(loc))
+    let before-pos = before.last().location().position()
+    let after = query(selector(after-label).before(loc))
+    let after-pos = after.last().location().position()
 
       let available-height = after-pos.y - before-pos.y
 
@@ -130,8 +126,8 @@
           )
         },
       )
-    },
-  )
+    }
+  }
 }
 
 // SIDE BY SIDE
